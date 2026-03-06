@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rankacy Webhook Monitor</title>
+    <link rel="stylesheet" href="/static/app.css" />
+    <script defer src="/static/app.js"></script>
+  </head>
+  <body data-page="webhooks">
+    <div class="backdrop backdrop-one"></div>
+    <div class="backdrop backdrop-two"></div>
+    <main class="shell">
+      <nav class="site-nav reveal">
+        <a class="brand-mark" href="/">Rankacy Showcase</a>
+        <div class="nav-links">
+          <a class="nav-link" href="/">Overview</a>
+          <a class="nav-link" href="/demos">Demos</a>
+          <a class="nav-link" href="/highlights">Highlights</a>
+          <a class="nav-link is-active" href="/webhooks">Webhooks</a>
+        </div>
+        <div class="nav-meta">
+          <span class="pill" id="nav-health-pill">Loading</span>
+        </div>
+      </nav>
+
+      <header class="page-header reveal">
+        <p class="eyebrow">Webhook workflow</p>
+        <h1>Monitor terminal events</h1>
+        <p class="lead">
+          Rankacy emits webhook events when demo and highlight processing reaches a terminal state. This page focuses on the receiver endpoint, delivery expectations, and the local event log.
+        </p>
+      </header>
+
+      <section class="panel reveal">
+        <div class="panel-header">
+          <h2>Current Selection</h2>
+          <button class="mini-button" data-action="refresh-dashboard" type="button">Refresh all</button>
+        </div>
+        <div id="session-summary" class="stack"></div>
+      </section>
+
+      <section class="grid grid-two reveal">
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Receiver Notes</h2>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-box">
+              <strong>Endpoint</strong>
+              <code>POST /webhooks/rankacy</code>
+            </div>
+            <div class="summary-box">
+              <strong>Deduplication</strong>
+              <span><code>X-Event-Id</code> first, JSON <code>id</code> fallback</span>
+            </div>
+            <div class="summary-box">
+              <strong>Local Store</strong>
+              <span><code>data/webhook-events.json</code></span>
+            </div>
+            <div class="summary-box">
+              <strong>Typical Tunnel</strong>
+              <span><code>ngrok http 9000</code></span>
+            </div>
+          </div>
+          <div class="subtle-card" style="margin-top: 1rem;">
+            <strong>Rankacy event types</strong>
+            <p class="muted">
+              <code>demo.processed.success</code>, <code>demo.processed.failed</code>,
+              <code>highlight.processed.success</code>, <code>highlight.processed.failed</code>
+            </p>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Delivery Behavior</h2>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-box">
+              <strong>Semantics</strong>
+              <span>At-least-once delivery</span>
+            </div>
+            <div class="summary-box">
+              <strong>Success Signal</strong>
+              <span>Any <code>2xx</code> response</span>
+            </div>
+            <div class="summary-box">
+              <strong>Expected Headers</strong>
+              <span><code>X-Event-Id</code>, <code>X-Event-Type</code>, <code>X-Request-Id</code></span>
+            </div>
+            <div class="summary-box">
+              <strong>Hardening</strong>
+              <span>HTTPS, network restrictions, idempotency checks</span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel reveal">
+        <div class="panel-header">
+          <h2>Webhook Events</h2>
+          <button class="mini-button" data-action="refresh-webhooks" type="button">Refresh</button>
+        </div>
+        <div id="webhook-events-list"></div>
+      </section>
+
+    </main>
+  </body>
+</html>

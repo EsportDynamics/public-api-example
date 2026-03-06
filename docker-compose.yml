@@ -1,0 +1,9 @@
+services:
+  showcase:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./data:/app/data

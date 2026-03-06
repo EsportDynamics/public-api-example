@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rankacy Public API Showcase</title>
+    <link rel="stylesheet" href="/static/app.css" />
+    <script defer src="/static/app.js"></script>
+  </head>
+  <body data-page="overview">
+    <div class="backdrop backdrop-one"></div>
+    <div class="backdrop backdrop-two"></div>
+    <main class="shell">
+      <nav class="site-nav reveal">
+        <a class="brand-mark" href="/">Rankacy Showcase</a>
+        <div class="nav-links">
+          <a class="nav-link is-active" href="/">Overview</a>
+          <a class="nav-link" href="/demos">Demos</a>
+          <a class="nav-link" href="/highlights">Highlights</a>
+          <a class="nav-link" href="/webhooks">Webhooks</a>
+        </div>
+        <div class="nav-meta">
+          <span class="pill" id="nav-health-pill">Loading</span>
+        </div>
+      </nav>
+
+      <header class="hero reveal">
+        <p class="eyebrow">Clearer multi-page workflow</p>
+        <h1>Start Here</h1>
+        <p class="lead">
+          This repository is organized around the actual Rankacy integration flow: configure auth,
+          upload a demo, inspect parsing output, queue highlights, then watch async processing and webhook deliveries.
+        </p>
+        <div class="hero-actions">
+          <a class="ghost-button" href="/docs" target="_blank" rel="noreferrer">Local Swagger</a>
+          <a class="ghost-button" href="https://highlights-api.rankacy.com/docs" target="_blank" rel="noreferrer">
+            Rankacy Swagger
+          </a>
+          <a class="ghost-button" href="https://highlights-api.rankacy.com/ui/docs/" target="_blank" rel="noreferrer">
+            Rankacy Docs
+          </a>
+        </div>
+      </header>
+
+      <section class="grid grid-two reveal">
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Integration Health</h2>
+          <div id="health-summary" class="stack"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Workspace Snapshot</h2>
+          </div>
+          <div id="overview-stats"></div>
+        </article>
+      </section>
+
+      <section class="grid grid-three reveal">
+        <a class="nav-card" href="/demos">
+          <p class="eyebrow">Step 1</p>
+          <h2>Demo Processing</h2>
+          <p>Inspect uploads, processing state, parsed players, and kills.</p>
+        </a>
+        <a class="nav-card" href="/highlights">
+          <p class="eyebrow">Step 2</p>
+          <h2>Render Profile</h2>
+          <p>Configure resolution, FPS, cost checks, and monitor the highlight queue.</p>
+        </a>
+        <a class="nav-card" href="/webhooks">
+          <p class="eyebrow">Step 3</p>
+          <h2>Webhook Monitoring</h2>
+          <p>Review delivery status, deduplication behavior, and local event logs.</p>
+        </a>
+      </section>
+
+      <section class="grid grid-two reveal">
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Happy Path Checklist</h2>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-box">
+              <strong>1. Configure</strong>
+              <span>Set <code>RANKACY_BASE_URL</code> and <code>RANKACY_TOKEN</code>.</span>
+            </div>
+            <div class="summary-box">
+              <strong>2. Upload</strong>
+              <span>Send a <code>.dem</code> file, with optional auto highlight settings.</span>
+            </div>
+            <div class="summary-box">
+              <strong>3. Poll</strong>
+              <span>Watch demo status until it reaches <code>SUCCESS</code> or <code>FAILED</code>.</span>
+            </div>
+            <div class="summary-box">
+              <strong>4. Inspect</strong>
+              <span>Use kills and players to decide what to render.</span>
+            </div>
+            <div class="summary-box">
+              <strong>5. Create</strong>
+              <span>Queue a highlight automatically, by ticks, or by kill ID from the Demos page.</span>
+            </div>
+            <div class="summary-box">
+              <strong>6. Monitor</strong>
+              <span>Track highlight status and webhook deliveries.</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Credit And Transactions</h2>
+            <button class="mini-button" data-action="refresh-transactions" type="button">Refresh</button>
+          </div>
+          <div id="transactions-list"></div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
