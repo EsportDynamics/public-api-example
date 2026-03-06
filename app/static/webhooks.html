@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rankacy API &middot; Webhook Monitor</title>
+    <link rel="stylesheet" href="/static/app.css" />
+    <script defer src="/static/app.js"></script>
+  </head>
+  <body data-page="webhooks">
+    <div class="backdrop backdrop-one"></div>
+    <div class="backdrop backdrop-two"></div>
+    <main class="shell">
+      <nav class="site-nav reveal">
+        <a class="brand-mark" href="/">Rankacy API</a>
+        <div class="nav-links">
+          <a class="nav-link" href="/">Overview</a>
+          <a class="nav-link" href="/demos">Demos</a>
+          <a class="nav-link" href="/highlights">Highlights</a>
+          <a class="nav-link is-active" href="/webhooks">Webhooks</a>
+        </div>
+        <div class="nav-meta">
+          <span class="pill" id="nav-health-pill">Loading</span>
+        </div>
+      </nav>
+
+      <header class="page-header reveal">
+        <p class="eyebrow">POST /webhooks/rankacy &middot; Event-driven notifications</p>
+        <h1>Webhook Monitor</h1>
+        <p class="lead">
+          Rankacy emits webhook events when demo and highlight processing reaches a terminal state.
+          This page documents the receiver endpoint, delivery semantics, and displays the local event log.
+        </p>
+      </header>
+
+      <section class="grid grid-two reveal">
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Receiver Configuration</h2>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-box">
+              <strong>Endpoint</strong>
+              <code>POST /webhooks/rankacy</code>
+            </div>
+            <div class="summary-box">
+              <strong>Deduplication</strong>
+              <span><code>X-Event-Id</code> first, JSON <code>id</code> fallback</span>
+            </div>
+            <div class="summary-box">
+              <strong>Local Store</strong>
+              <span><code>data/webhook-events.json</code></span>
+            </div>
+            <div class="summary-box">
+              <strong>Typical Tunnel</strong>
+              <span><code>ngrok http 9000</code></span>
+            </div>
+          </div>
+          <div class="subtle-card" style="margin-top: 1rem;">
+            <strong style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); font-family: 'JetBrains Mono', monospace;">Event types</strong>
+            <div class="endpoint-list" style="margin-top: 0.5rem;">
+              <div class="endpoint-item">
+                <span class="http-method post">EVT</span>
+                <span>demo.processed.success</span>
+              </div>
+              <div class="endpoint-item">
+                <span class="http-method delete">EVT</span>
+                <span>demo.processed.failed</span>
+              </div>
+              <div class="endpoint-item">
+                <span class="http-method post">EVT</span>
+                <span>highlight.processed.success</span>
+              </div>
+              <div class="endpoint-item">
+                <span class="http-method delete">EVT</span>
+                <span>highlight.processed.failed</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Delivery Behavior</h2>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-box">
+              <strong>Semantics</strong>
+              <span>At-least-once delivery</span>
+            </div>
+            <div class="summary-box">
+              <strong>Success Signal</strong>
+              <span>Any <code>2xx</code> response</span>
+            </div>
+            <div class="summary-box">
+              <strong>Expected Headers</strong>
+              <span><code>X-Event-Id</code>, <code>X-Event-Type</code>, <code>X-Request-Id</code></span>
+            </div>
+            <div class="summary-box">
+              <strong>Hardening</strong>
+              <span>HTTPS, network restrictions, idempotency checks</span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel reveal">
+        <div class="panel-header">
+          <h2>Webhook Events</h2>
+          <button class="mini-button" data-action="refresh-webhooks" type="button">Refresh</button>
+        </div>
+        <div id="webhook-events-list"></div>
+      </section>
+
+    </main>
+  </body>
+</html>

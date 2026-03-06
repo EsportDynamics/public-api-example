@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rankacy Public API Showcase</title>
+    <link rel="stylesheet" href="/static/app.css" />
+    <script defer src="/static/app.js"></script>
+  </head>
+  <body data-page="overview">
+    <div class="backdrop backdrop-one"></div>
+    <div class="backdrop backdrop-two"></div>
+    <main class="shell">
+      <nav class="site-nav reveal">
+        <a class="brand-mark" href="/">Rankacy API</a>
+        <div class="nav-links">
+          <a class="nav-link is-active" href="/">Overview</a>
+          <a class="nav-link" href="/demos">Demos</a>
+          <a class="nav-link" href="/highlights">Highlights</a>
+          <a class="nav-link" href="/webhooks">Webhooks</a>
+        </div>
+        <div class="nav-meta">
+          <span class="pill" id="nav-health-pill">Loading</span>
+        </div>
+      </nav>
+
+      <header class="hero reveal">
+        <p class="eyebrow">Public API &middot; Integration Example</p>
+        <h1>Rankacy Highlights API Showcase</h1>
+        <p class="lead">
+          A complete integration reference for the Rankacy Highlights API. Upload Counter-Strike demos,
+          inspect parsed output, queue video highlights, and receive webhook notifications &mdash; all wired end-to-end.
+        </p>
+        <div class="hero-actions">
+          <a class="primary-button" href="/demos">Start integrating</a>
+          <a class="ghost-button" href="/docs" target="_blank" rel="noreferrer">Swagger UI</a>
+          <a class="ghost-button" href="https://highlights-api.rankacy.com/docs" target="_blank" rel="noreferrer">
+            API Docs
+          </a>
+        </div>
+        <div class="api-badge">
+          <span class="method">BASE</span>
+          <span>https://highlights-api.rankacy.com/api/public/v1</span>
+        </div>
+      </header>
+
+      <section class="grid grid-three reveal">
+        <a class="nav-card" href="/demos">
+          <p class="eyebrow">Step 1</p>
+          <h2>Demo Processing</h2>
+          <p>Upload .dem files, monitor parsing status, and inspect extracted players and kills.</p>
+          <div class="endpoint-list">
+            <div class="endpoint-item">
+              <span class="http-method post">POST</span>
+              <span>/demos/upload</span>
+            </div>
+            <div class="endpoint-item">
+              <span class="http-method get">GET</span>
+              <span>/demos/{id}/kills</span>
+            </div>
+          </div>
+        </a>
+        <a class="nav-card" href="/highlights">
+          <p class="eyebrow">Step 2</p>
+          <h2>Highlight Rendering</h2>
+          <p>Configure resolution and FPS, estimate cost, and monitor the rendering queue.</p>
+          <div class="endpoint-list">
+            <div class="endpoint-item">
+              <span class="http-method post">POST</span>
+              <span>/highlights</span>
+            </div>
+            <div class="endpoint-item">
+              <span class="http-method get">GET</span>
+              <span>/highlights/{id}</span>
+            </div>
+          </div>
+        </a>
+        <a class="nav-card" href="/webhooks">
+          <p class="eyebrow">Step 3</p>
+          <h2>Webhook Events</h2>
+          <p>Receive terminal-state notifications for demo and highlight processing.</p>
+          <div class="endpoint-list">
+            <div class="endpoint-item">
+              <span class="http-method post">POST</span>
+              <span>/webhooks/rankacy</span>
+            </div>
+          </div>
+        </a>
+      </section>
+
+      <section class="grid grid-two reveal">
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Integration Health</h2>
+          <div id="health-summary" class="stack"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Workspace Snapshot</h2>
+          </div>
+          <div id="overview-stats"></div>
+        </article>
+      </section>
+
+      <section class="grid grid-two reveal">
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Integration Flow</h2>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-box">
+              <strong>1. Configure</strong>
+              <span>Set <code>RANKACY_BASE_URL</code> and <code>RANKACY_TOKEN</code> in your env.</span>
+            </div>
+            <div class="summary-box">
+              <strong>2. Upload</strong>
+              <span>Send a <code>.dem</code> file via <code>POST /demos/upload</code>.</span>
+            </div>
+            <div class="summary-box">
+              <strong>3. Poll</strong>
+              <span>Watch demo status until <code>SUCCESS</code> or <code>FAILED</code>.</span>
+            </div>
+            <div class="summary-box">
+              <strong>4. Inspect</strong>
+              <span>Retrieve kills and players to decide what to render.</span>
+            </div>
+            <div class="summary-box">
+              <strong>5. Create</strong>
+              <span>Queue highlights automatically, by ticks, or by kill ID.</span>
+            </div>
+            <div class="summary-box">
+              <strong>6. Monitor</strong>
+              <span>Track highlight status and receive webhook callbacks.</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Credit &amp; Transactions</h2>
+            <button class="mini-button" data-action="refresh-transactions" type="button">Refresh</button>
+          </div>
+          <div id="transactions-list"></div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

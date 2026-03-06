@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rankacy API &middot; Demo Processing</title>
+    <link rel="stylesheet" href="/static/app.css" />
+    <script defer src="/static/app.js"></script>
+  </head>
+  <body data-page="demos">
+    <div class="backdrop backdrop-one"></div>
+    <div class="backdrop backdrop-two"></div>
+    <main class="shell">
+      <nav class="site-nav reveal">
+        <a class="brand-mark" href="/">Rankacy API</a>
+        <div class="nav-links">
+          <a class="nav-link" href="/">Overview</a>
+          <a class="nav-link is-active" href="/demos">Demos</a>
+          <a class="nav-link" href="/highlights">Highlights</a>
+          <a class="nav-link" href="/webhooks">Webhooks</a>
+        </div>
+        <div class="nav-meta">
+          <span class="pill" id="nav-health-pill">Loading</span>
+        </div>
+      </nav>
+
+      <header class="page-header reveal">
+        <p class="eyebrow">POST /demos/upload &middot; GET /demos &middot; GET /demos/{id}</p>
+        <h1>Demo Processing</h1>
+        <p class="lead">
+          Upload a Counter-Strike demo file, monitor its parsing lifecycle, inspect extracted players and kills,
+          then queue highlights directly from the parsed data.
+        </p>
+      </header>
+
+      <section class="grid grid-two reveal">
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Upload Demo</h2>
+          </div>
+          <form id="upload-form" class="stack">
+            <label>
+              <span>.dem file</span>
+              <input id="demo-file" name="file" type="file" accept=".dem" required />
+            </label>
+            <label class="checkbox">
+              <input id="generate-auto-highlight" name="generate_auto_highlight" type="checkbox" />
+              <span>Also queue an automatic highlight during upload using the render profile below.</span>
+            </label>
+            <button class="primary-button" id="upload-submit" type="submit">Upload demo</button>
+          </form>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <h2>API Reference</h2>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-box">
+              <strong>Auto highlight</strong>
+              <span>Upload can request an automatic highlight using the render profile configured below.</span>
+            </div>
+            <div class="summary-box">
+              <strong>After parsing</strong>
+              <span>Once the demo reaches <code>SUCCESS</code>, use the highlight forms below.</span>
+            </div>
+            <div class="summary-box">
+              <strong>Kill selection</strong>
+              <span>Choose kills here and seed highlight request arrays below.</span>
+            </div>
+            <div class="summary-box">
+              <strong>Raw payloads</strong>
+              <span>Full JSON responses are shown in expandable blocks for field inspection.</span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel reveal">
+        <div class="panel-header">
+          <h2>Demos</h2>
+          <button class="mini-button" data-action="refresh-demos" type="button">Refresh</button>
+        </div>
+        <div id="demos-list"></div>
+      </section>
+
+      <section class="panel reveal">
+        <div class="panel-header">
+          <h2>Selected Demo Workspace</h2>
+          <span class="pill" id="selected-demo-status">No demo selected</span>
+        </div>
+        <div id="demo-summary" class="stack"></div>
+        <div class="workspace-grid workspace-grid-wide">
+          <section class="workspace-column">
+            <div class="workspace-section-head">
+              <h3>Players</h3>
+            </div>
+            <div id="players-list"></div>
+          </section>
+          <section class="workspace-column">
+            <div class="workspace-section-head">
+              <h3>Kills</h3>
+            </div>
+            <div id="kills-list"></div>
+          </section>
+        </div>
+        <details class="json-block">
+          <summary>Raw demo workspace JSON</summary>
+          <pre id="demo-raw"></pre>
+        </details>
+      </section>
+
+      <section class="panel reveal">
+        <div class="panel-header">
+          <h2>Generate Highlights From This Demo</h2>
+        </div>
+        <div class="highlight-builder-layout">
+          <article class="subtle-card form-card">
+            <div class="panel-header">
+              <h3>Render Profile</h3>
+              <button class="mini-button" data-action="estimate-cost" type="button">Check cost</button>
+            </div>
+            <form id="render-profile-form" class="stack">
+              <label>
+                <span>Resolution</span>
+                <select id="resolution-id" name="resolution_id"></select>
+              </label>
+              <label>
+                <span>FPS</span>
+                <select id="fps-id" name="fps_id"></select>
+              </label>
+            </form>
+            <div id="cost-summary" class="stack" style="margin-top: 0.75rem;"></div>
+          </article>
+
+          <div class="highlight-request-grid">
+            <article class="subtle-card form-card">
+              <div class="panel-header">
+                <h3>Automatic Highlight</h3>
+              </div>
+              <form id="standard-highlight-form" class="stack">
+                <label>
+                  <span>Title</span>
+                  <input name="title" type="text" placeholder="Auto highlight for selected demo" />
+                </label>
+                <label>
+                  <span>Intro</span>
+                  <select name="intro">
+                    <option value="NONE">NONE</option>
+                    <option value="GENERIC">GENERIC</option>
+                    <option value="SCENIC">SCENIC</option>
+                  </select>
+                </label>
+                <label class="checkbox">
+                  <input name="use_transition" type="checkbox" />
+                  <span>Use transition between clips</span>
+                </label>
+                <button class="primary-button" id="standard-submit" type="submit">Queue automatic highlight</button>
+              </form>
+            </article>
+
+            <article class="subtle-card form-card">
+              <div class="panel-header">
+                <h3>Highlight By Ticks</h3>
+                <div class="panel-actions">
+                  <button class="mini-button" data-action="seed-ticks-from-kill" type="button">Use selected kill</button>
+                  <button class="mini-button" data-action="add-tick-range" type="button">Add item</button>
+                </div>
+              </div>
+              <form id="ticks-highlight-form" class="stack">
+                <label>
+                  <span>Title</span>
+                  <input name="title" type="text" placeholder="Key moment by ticks" />
+                </label>
+                <div>
+                  <div class="workspace-section-head">
+                    <span class="muted">ticks[] payload</span>
+                  </div>
+                  <div id="tick-range-list" class="array-items"></div>
+                </div>
+                <button class="primary-button" id="ticks-submit" type="submit">Queue by ticks</button>
+              </form>
+            </article>
+
+            <article class="subtle-card form-card">
+              <div class="panel-header">
+                <h3>Highlight By Kill ID</h3>
+                <div class="panel-actions">
+                  <button class="mini-button" data-action="seed-kill-id" type="button">Use selected kill</button>
+                  <button class="mini-button" data-action="add-kill-id" type="button">Add item</button>
+                </div>
+              </div>
+              <form id="kill-highlight-form" class="stack">
+                <label>
+                  <span>Title</span>
+                  <input name="title" type="text" placeholder="Entry frag chain" />
+                </label>
+                <div>
+                  <div class="workspace-section-head">
+                    <span class="muted">demo_kill_ids[] payload</span>
+                  </div>
+                  <div id="kill-id-list" class="array-items"></div>
+                </div>
+                <label>
+                  <span>Pre ticks</span>
+                  <input name="pre_ticks" type="number" min="0" value="192" />
+                </label>
+                <label>
+                  <span>Post ticks</span>
+                  <input name="post_ticks" type="number" min="0" value="192" />
+                </label>
+                <label>
+                  <span>Speed</span>
+                  <select name="speed">
+                    <option value="1">1x</option>
+                    <option value="0.5">0.5x</option>
+                    <option value="0.25">0.25x</option>
+                    <option value="2">2x</option>
+                  </select>
+                </label>
+                <button class="primary-button" id="kill-submit" type="submit">Queue by kill ID</button>
+              </form>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <template id="tick-range-template">
+        <fieldset class="array-item">
+          <div class="array-item-head">
+            <strong>ticks[] item</strong>
+            <button class="mini-button" data-action="remove-tick-range" type="button">Remove</button>
+          </div>
+          <div class="grid grid-two">
+            <label>
+              <span>Start tick</span>
+              <input data-field="start_tick" type="number" min="0" placeholder="15423" />
+            </label>
+            <label>
+              <span>End tick</span>
+              <input data-field="end_tick" type="number" min="0" placeholder="15610" />
+            </label>
+            <label>
+              <span>Steam ID</span>
+              <input data-field="steam_id" type="text" placeholder="7656119..." />
+            </label>
+            <label>
+              <span>Speed</span>
+              <select data-field="speed">
+                <option value="1">1x</option>
+                <option value="0.5">0.5x</option>
+                <option value="0.25">0.25x</option>
+                <option value="2">2x</option>
+              </select>
+            </label>
+          </div>
+        </fieldset>
+      </template>
+
+      <template id="kill-id-template">
+        <fieldset class="array-item">
+          <div class="array-item-head">
+            <strong>demo_kill_ids[] item</strong>
+            <button class="mini-button" data-action="remove-kill-id" type="button">Remove</button>
+          </div>
+          <label>
+            <span>Kill ID</span>
+            <input data-field="demo_kill_id" type="number" min="1" placeholder="801" />
+          </label>
+        </fieldset>
+      </template>
+
+    </main>
+  </body>
+</html>
