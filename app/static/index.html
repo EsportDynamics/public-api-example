@@ -12,7 +12,7 @@
     <div class="backdrop backdrop-two"></div>
     <main class="shell">
       <nav class="site-nav reveal">
-        <a class="brand-mark" href="/">Rankacy Showcase</a>
+        <a class="brand-mark" href="/">Rankacy API</a>
         <div class="nav-links">
           <a class="nav-link is-active" href="/">Overview</a>
           <a class="nav-link" href="/demos">Demos</a>
@@ -25,22 +25,68 @@
       </nav>
 
       <header class="hero reveal">
-        <p class="eyebrow">Clearer multi-page workflow</p>
-        <h1>Start Here</h1>
+        <p class="eyebrow">Public API &middot; Integration Example</p>
+        <h1>Rankacy Highlights API Showcase</h1>
         <p class="lead">
-          This repository is organized around the actual Rankacy integration flow: configure auth,
-          upload a demo, inspect parsing output, queue highlights, then watch async processing and webhook deliveries.
+          A complete integration reference for the Rankacy Highlights API. Upload Counter-Strike demos,
+          inspect parsed output, queue video highlights, and receive webhook notifications &mdash; all wired end-to-end.
         </p>
         <div class="hero-actions">
-          <a class="ghost-button" href="/docs" target="_blank" rel="noreferrer">Local Swagger</a>
+          <a class="primary-button" href="/demos">Start integrating</a>
+          <a class="ghost-button" href="/docs" target="_blank" rel="noreferrer">Swagger UI</a>
           <a class="ghost-button" href="https://highlights-api.rankacy.com/docs" target="_blank" rel="noreferrer">
-            Rankacy Swagger
-          </a>
-          <a class="ghost-button" href="https://highlights-api.rankacy.com/ui/docs/" target="_blank" rel="noreferrer">
-            Rankacy Docs
+            API Docs
           </a>
         </div>
+        <div class="api-badge">
+          <span class="method">BASE</span>
+          <span>https://highlights-api.rankacy.com/api/public/v1</span>
+        </div>
       </header>
+
+      <section class="grid grid-three reveal">
+        <a class="nav-card" href="/demos">
+          <p class="eyebrow">Step 1</p>
+          <h2>Demo Processing</h2>
+          <p>Upload .dem files, monitor parsing status, and inspect extracted players and kills.</p>
+          <div class="endpoint-list">
+            <div class="endpoint-item">
+              <span class="http-method post">POST</span>
+              <span>/demos/upload</span>
+            </div>
+            <div class="endpoint-item">
+              <span class="http-method get">GET</span>
+              <span>/demos/{id}/kills</span>
+            </div>
+          </div>
+        </a>
+        <a class="nav-card" href="/highlights">
+          <p class="eyebrow">Step 2</p>
+          <h2>Highlight Rendering</h2>
+          <p>Configure resolution and FPS, estimate cost, and monitor the rendering queue.</p>
+          <div class="endpoint-list">
+            <div class="endpoint-item">
+              <span class="http-method post">POST</span>
+              <span>/highlights</span>
+            </div>
+            <div class="endpoint-item">
+              <span class="http-method get">GET</span>
+              <span>/highlights/{id}</span>
+            </div>
+          </div>
+        </a>
+        <a class="nav-card" href="/webhooks">
+          <p class="eyebrow">Step 3</p>
+          <h2>Webhook Events</h2>
+          <p>Receive terminal-state notifications for demo and highlight processing.</p>
+          <div class="endpoint-list">
+            <div class="endpoint-item">
+              <span class="http-method post">POST</span>
+              <span>/webhooks/rankacy</span>
+            </div>
+          </div>
+        </a>
+      </section>
 
       <section class="grid grid-two reveal">
         <article class="panel">
@@ -57,60 +103,42 @@
         </article>
       </section>
 
-      <section class="grid grid-three reveal">
-        <a class="nav-card" href="/demos">
-          <p class="eyebrow">Step 1</p>
-          <h2>Demo Processing</h2>
-          <p>Inspect uploads, processing state, parsed players, and kills.</p>
-        </a>
-        <a class="nav-card" href="/highlights">
-          <p class="eyebrow">Step 2</p>
-          <h2>Render Profile</h2>
-          <p>Configure resolution, FPS, cost checks, and monitor the highlight queue.</p>
-        </a>
-        <a class="nav-card" href="/webhooks">
-          <p class="eyebrow">Step 3</p>
-          <h2>Webhook Monitoring</h2>
-          <p>Review delivery status, deduplication behavior, and local event logs.</p>
-        </a>
-      </section>
-
       <section class="grid grid-two reveal">
         <article class="panel">
           <div class="panel-header">
-            <h2>Happy Path Checklist</h2>
+            <h2>Integration Flow</h2>
           </div>
           <div class="summary-grid">
             <div class="summary-box">
               <strong>1. Configure</strong>
-              <span>Set <code>RANKACY_BASE_URL</code> and <code>RANKACY_TOKEN</code>.</span>
+              <span>Set <code>RANKACY_BASE_URL</code> and <code>RANKACY_TOKEN</code> in your env.</span>
             </div>
             <div class="summary-box">
               <strong>2. Upload</strong>
-              <span>Send a <code>.dem</code> file, with optional auto highlight settings.</span>
+              <span>Send a <code>.dem</code> file via <code>POST /demos/upload</code>.</span>
             </div>
             <div class="summary-box">
               <strong>3. Poll</strong>
-              <span>Watch demo status until it reaches <code>SUCCESS</code> or <code>FAILED</code>.</span>
+              <span>Watch demo status until <code>SUCCESS</code> or <code>FAILED</code>.</span>
             </div>
             <div class="summary-box">
               <strong>4. Inspect</strong>
-              <span>Use kills and players to decide what to render.</span>
+              <span>Retrieve kills and players to decide what to render.</span>
             </div>
             <div class="summary-box">
               <strong>5. Create</strong>
-              <span>Queue a highlight automatically, by ticks, or by kill ID from the Demos page.</span>
+              <span>Queue highlights automatically, by ticks, or by kill ID.</span>
             </div>
             <div class="summary-box">
               <strong>6. Monitor</strong>
-              <span>Track highlight status and webhook deliveries.</span>
+              <span>Track highlight status and receive webhook callbacks.</span>
             </div>
           </div>
         </article>
 
         <article class="panel">
           <div class="panel-header">
-            <h2>Credit And Transactions</h2>
+            <h2>Credit &amp; Transactions</h2>
             <button class="mini-button" data-action="refresh-transactions" type="button">Refresh</button>
           </div>
           <div id="transactions-list"></div>

@@ -34,7 +34,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       await refreshDashboard({ silent: true });
     } catch (error) {
-      setLastAction("Initial load", error.message, true);
       renderAll();
     }
   } else {
@@ -59,8 +58,6 @@ function wireEvents() {
       const fileInput = byId("demo-file");
       const file = fileInput?.files?.[0];
       if (!file) {
-        setLastAction("Upload demo", "Pick a .dem file first.", true);
-        renderSession();
         return;
       }
 
@@ -97,8 +94,6 @@ function wireEvents() {
     standardForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       if (!state.selectedDemoId) {
-        setLastAction("Automatic highlight", "Select a demo first.", true);
-        renderSession();
         return;
       }
 
@@ -109,13 +104,12 @@ function wireEvents() {
         resolution_id: profile.resolutionId,
         fps_id: profile.fpsId,
         title: optionalString(formData.get("title")),
-        mode: optionalString(formData.get("mode")),
         intro: formData.get("intro"),
         use_transition: formData.get("use_transition") === "on",
-        show_tick: formData.get("show_tick") === "on",
       };
 
       await queueHighlight("/api/public/v1/highlights", payload, "Queue automatic highlight");
+      standardForm.reset();
     });
   }
 
@@ -124,8 +118,6 @@ function wireEvents() {
     ticksForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       if (!state.selectedDemoId) {
-        setLastAction("Highlight by ticks", "Select a demo first.", true);
-        renderSession();
         return;
       }
 
@@ -143,8 +135,10 @@ function wireEvents() {
         };
 
         await queueHighlight("/api/public/v1/highlights/by-ticks", payload, "Queue highlight by ticks");
+        ticksForm.reset();
+        ensureArrayEditors();
       } catch (error) {
-        setLastAction("Highlight by ticks", error.message, true);
+        showToast(error.message || "Invalid tick range data", "error");
         renderAll();
       }
     });
@@ -155,8 +149,6 @@ function wireEvents() {
     killForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       if (!state.selectedDemoId) {
-        setLastAction("Highlight by kill", "Select a demo first.", true);
-        renderSession();
         return;
       }
 
@@ -177,8 +169,10 @@ function wireEvents() {
         };
 
         await queueHighlight("/api/public/v1/highlights/by-kill", payload, "Queue highlight by kill");
+        killForm.reset();
+        ensureArrayEditors();
       } catch (error) {
-        setLastAction("Highlight by kill", error.message, true);
+        showToast(error.message || "Invalid kill ID data", "error");
         renderAll();
       }
     });
@@ -198,7 +192,6 @@ function wireEvents() {
           await refreshDashboard({ silent: true });
         }
       } catch (error) {
-        setLastAction("Refresh health", error.message, true);
         renderAll();
       }
       return;
@@ -208,7 +201,6 @@ function wireEvents() {
       try {
         await refreshDashboard();
       } catch (error) {
-        setLastAction("Refresh dashboard", error.message, true);
         renderAll();
       }
       return;
@@ -217,9 +209,8 @@ function wireEvents() {
     if (action === "refresh-transactions") {
       try {
         await refreshTransactions(false);
-        setLastAction("Refresh transactions", "Credit and transaction data reloaded.", false);
       } catch (error) {
-        setLastAction("Refresh transactions", error.message, true);
+        console.log("Failed to refresh transactions:", error);
       }
       renderAll();
       return;
@@ -228,9 +219,8 @@ function wireEvents() {
     if (action === "estimate-cost") {
       try {
         await refreshCost(false);
-        setLastAction("Cost estimate", "Highlight cost loaded from /api/public/v1/highlights/cost.", false);
       } catch (error) {
-        setLastAction("Cost estimate", error.message, true);
+        console.log("Failed to estimate cost:", error);
       }
       renderAll();
       return;
@@ -270,7 +260,7 @@ function wireEvents() {
       try {
         await refreshDemoWorkspace(false);
       } catch (error) {
-        setLastAction("Select demo", error.message, true);
+        console.log("Failed to select demo:", error);
       }
       renderAll();
       return;
@@ -282,7 +272,7 @@ function wireEvents() {
       try {
         await refreshHighlightDetail(false);
       } catch (error) {
-        setLastAction("Select highlight", error.message, true);
+        console.log("Failed to select highlight:", error);
       }
       renderAll();
       return;
@@ -323,7 +313,7 @@ function wireEvents() {
       try {
         await refreshDemoWorkspace(false);
       } catch (error) {
-        setLastAction("Kills pagination", error.message, true);
+        console.log("Failed to refresh demo workspace:", error);
         renderAll();
       }
       return;
@@ -372,8 +362,7 @@ function bindIfPresent(id, eventName, handler) {
 
 async function queueHighlight(url, payload, label) {
   if (!payload.resolution_id || !payload.fps_id) {
-    setLastAction(label, "Pick a resolution and FPS first.", true);
-    renderSession();
+    showToast("Select a resolution and FPS in the render profile first.", "error");
     return;
   }
 
@@ -680,8 +669,6 @@ function makeKillSnapshot(kill) {
 function seedKillForms(action) {
   const kill = selectedKill();
   if (!kill) {
-    setLastAction("Seed forms", "Pick a kill from the Demos page first.", true);
-    renderSession();
     return;
   }
 
@@ -692,7 +679,6 @@ function seedKillForms(action) {
       steam_id: kill.attacker_steam_id ?? "",
       speed: 1,
     });
-    setLastAction("Seed tick range", `Kill ${kill.demo_kill_id} appended to ticks[].`, false);
     return;
   }
 
@@ -701,11 +687,9 @@ function seedKillForms(action) {
     if (!existingIds.includes(kill.demo_kill_id)) {
       appendKillIdRow(String(kill.demo_kill_id));
     }
-    setLastAction("Seed kill IDs", `Kill ${kill.demo_kill_id} appended to demo_kill_ids[].`, false);
     return;
   }
 
-  setLastAction("Selected kill", `Kill ${kill.demo_kill_id} saved for highlight creation.`, false);
 }
 
 function selectedKill() {
@@ -719,7 +703,6 @@ function renderAll() {
   renderNavStatus();
   renderHealth();
   renderCost();
-  renderSession();
   renderOverview();
   renderDemos();
   renderDemoWorkspace();
@@ -862,40 +845,6 @@ function renderDemoProfileSummary() {
   `;
 }
 
-function renderSession() {
-  const container = byId("session-summary");
-  if (!container) {
-    return;
-  }
-
-  const selectedDemo = state.dashboard?.demos?.items?.find((item) => item.id === state.selectedDemoId) ?? null;
-  const selectedHighlight = state.dashboard?.highlights?.items?.find((item) => item.id === state.selectedHighlightId) ?? null;
-  const kill = selectedKill();
-  container.innerHTML = `
-    <div class="summary-grid">
-      <div class="summary-box">
-        <strong>Selected Demo</strong>
-        <span>${selectedDemo ? `#${selectedDemo.id} ${escapeHtml(selectedDemo.status)}` : "none"}</span>
-      </div>
-      <div class="summary-box">
-        <strong>Selected Highlight</strong>
-        <span>${selectedHighlight ? `#${selectedHighlight.id} ${escapeHtml(selectedHighlight.status)}` : "none"}</span>
-      </div>
-      <div class="summary-box">
-        <strong>Selected Kill</strong>
-        <span>${kill ? `#${kill.demo_kill_id} @ tick ${kill.tick}` : "none"}</span>
-      </div>
-      <div class="summary-box">
-        <strong>Highlight Queue</strong>
-        <span>${state.dashboard?.highlights?.pagination?.total ?? 0} total</span>
-      </div>
-    </div>
-    <div class="subtle-card">
-      <strong>Last action</strong>
-      <p>${state.lastAction ? escapeHtml(state.lastAction.message) : "No requests sent from the UI yet."}</p>
-    </div>
-  `;
-}
 
 function renderOverview() {
   const stats = byId("overview-stats");
@@ -1460,11 +1409,31 @@ function toggleActionButtons() {
 async function runAction(label, work) {
   try {
     await work();
-    setLastAction(label, `${label} succeeded.`, false);
+    showToast(`${label} completed`, "success");
   } catch (error) {
-    setLastAction(label, error.message, true);
+    console.error(`Failed to ${label.toLowerCase()}:`, error);
+    showToast(error.message || `Failed to ${label.toLowerCase()}`, "error");
   }
   renderAll();
+}
+
+function showToast(message, type = "success") {
+  let container = document.querySelector(".toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.className = "toast-container";
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `<span class="toast-icon">${type === "success" ? "\u2713" : "!"}</span><span class="toast-message">${escapeHtml(message)}</span>`;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("is-leaving");
+    toast.addEventListener("animationend", () => toast.remove());
+  }, 3500);
 }
 
 async function fetchJson(url, options = {}, consoleLabel = url) {
@@ -1477,10 +1446,6 @@ async function fetchJson(url, options = {}, consoleLabel = url) {
     throw new Error(`[${response.status}] ${detail}`);
   }
   return body;
-}
-
-function setLastAction(label, message, error) {
-  state.lastAction = { label, message, error };
 }
 
 function parseKillIds(rawValue) {

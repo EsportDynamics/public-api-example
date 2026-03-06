@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Rankacy Webhook Monitor</title>
+    <title>Rankacy API &middot; Webhook Monitor</title>
     <link rel="stylesheet" href="/static/app.css" />
     <script defer src="/static/app.js"></script>
   </head>
@@ -12,7 +12,7 @@
     <div class="backdrop backdrop-two"></div>
     <main class="shell">
       <nav class="site-nav reveal">
-        <a class="brand-mark" href="/">Rankacy Showcase</a>
+        <a class="brand-mark" href="/">Rankacy API</a>
         <div class="nav-links">
           <a class="nav-link" href="/">Overview</a>
           <a class="nav-link" href="/demos">Demos</a>
@@ -25,25 +25,18 @@
       </nav>
 
       <header class="page-header reveal">
-        <p class="eyebrow">Webhook workflow</p>
-        <h1>Monitor terminal events</h1>
+        <p class="eyebrow">POST /webhooks/rankacy &middot; Event-driven notifications</p>
+        <h1>Webhook Monitor</h1>
         <p class="lead">
-          Rankacy emits webhook events when demo and highlight processing reaches a terminal state. This page focuses on the receiver endpoint, delivery expectations, and the local event log.
+          Rankacy emits webhook events when demo and highlight processing reaches a terminal state.
+          This page documents the receiver endpoint, delivery semantics, and displays the local event log.
         </p>
       </header>
-
-      <section class="panel reveal">
-        <div class="panel-header">
-          <h2>Current Selection</h2>
-          <button class="mini-button" data-action="refresh-dashboard" type="button">Refresh all</button>
-        </div>
-        <div id="session-summary" class="stack"></div>
-      </section>
 
       <section class="grid grid-two reveal">
         <article class="panel">
           <div class="panel-header">
-            <h2>Receiver Notes</h2>
+            <h2>Receiver Configuration</h2>
           </div>
           <div class="summary-grid">
             <div class="summary-box">
@@ -64,11 +57,25 @@
             </div>
           </div>
           <div class="subtle-card" style="margin-top: 1rem;">
-            <strong>Rankacy event types</strong>
-            <p class="muted">
-              <code>demo.processed.success</code>, <code>demo.processed.failed</code>,
-              <code>highlight.processed.success</code>, <code>highlight.processed.failed</code>
-            </p>
+            <strong style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); font-family: 'JetBrains Mono', monospace;">Event types</strong>
+            <div class="endpoint-list" style="margin-top: 0.5rem;">
+              <div class="endpoint-item">
+                <span class="http-method post">EVT</span>
+                <span>demo.processed.success</span>
+              </div>
+              <div class="endpoint-item">
+                <span class="http-method delete">EVT</span>
+                <span>demo.processed.failed</span>
+              </div>
+              <div class="endpoint-item">
+                <span class="http-method post">EVT</span>
+                <span>highlight.processed.success</span>
+              </div>
+              <div class="endpoint-item">
+                <span class="http-method delete">EVT</span>
+                <span>highlight.processed.failed</span>
+              </div>
+            </div>
           </div>
         </article>
 

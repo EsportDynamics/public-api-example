@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Rankacy Highlight Creation</title>
+    <title>Rankacy API &middot; Highlight Rendering</title>
     <link rel="stylesheet" href="/static/app.css" />
     <script defer src="/static/app.js"></script>
   </head>
@@ -12,7 +12,7 @@
     <div class="backdrop backdrop-two"></div>
     <main class="shell">
       <nav class="site-nav reveal">
-        <a class="brand-mark" href="/">Rankacy Showcase</a>
+        <a class="brand-mark" href="/">Rankacy API</a>
         <div class="nav-links">
           <a class="nav-link" href="/">Overview</a>
           <a class="nav-link" href="/demos">Demos</a>
@@ -25,10 +25,11 @@
       </nav>
 
       <header class="page-header reveal">
-        <p class="eyebrow">Highlight workflow</p>
-        <h1>Queue and monitor highlights</h1>
+        <p class="eyebrow">GET /highlights &middot; DELETE /highlights/{id} &middot; GET /highlights/cost</p>
+        <h1>Highlight Rendering</h1>
         <p class="lead">
-          This page focuses on render settings, price checks, and the async lifecycle of generated highlights. Highlight request forms now live on the Demos page next to the selected demo.
+          Monitor the async lifecycle of queued highlights, inspect rendering details, and manage the highlight queue.
+          Render profiles and highlight request forms are on the Demos page.
         </p>
       </header>
 
