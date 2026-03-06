@@ -750,10 +750,6 @@ function renderHealth() {
         <strong>API Token</strong>
         <span>${escapeHtml(state.health.token_preview)}</span>
       </div>
-      <div class="summary-box">
-        <strong>Webhook Store</strong>
-        <code>${escapeHtml(state.health.webhook_store_path)}</code>
-      </div>
     </div>
     <p class="muted">
       ${state.health.token_configured
@@ -1361,7 +1357,11 @@ function renderWebhooks() {
 
   const events = state.dashboard?.webhook_events?.items ?? [];
   if (!events.length) {
-    container.innerHTML = emptyState("No webhook deliveries recorded locally yet.");
+    container.innerHTML = `
+      <div class="empty-state muted">
+        No webhook deliveries recorded locally yet. Rankacy cannot send webhook requests to <code>localhost</code> directly, so expose this app through a public tunnel such as <code>ngrok http 9000</code>.
+      </div>
+    `;
     return;
   }
 
