@@ -112,6 +112,7 @@ The app includes an optional receiver at `POST /webhooks/rankacy`.
 - Incoming events are stored in `data/webhook-events.json`
 - Deduplication uses `X-Event-Id`, with JSON body `id` as fallback
 - The handler returns quickly and keeps the payload for local inspection
+- `http://localhost:9000/webhooks/rankacy` cannot receive webhook deliveries directly from Rankacy because `localhost` is not publicly reachable
 
 For local testing with Rankacy, expose the app with a tunnel such as `ngrok http 9000` and point Rankacy's webhook URL to:
 

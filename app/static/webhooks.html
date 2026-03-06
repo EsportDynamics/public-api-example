@@ -48,14 +48,11 @@
               <span><code>X-Event-Id</code> first, JSON <code>id</code> fallback</span>
             </div>
             <div class="summary-box">
-              <strong>Local Store</strong>
-              <span><code>data/webhook-events.json</code></span>
-            </div>
-            <div class="summary-box">
               <strong>Typical Tunnel</strong>
               <span><code>ngrok http 9000</code></span>
             </div>
           </div>
+
           <div class="subtle-card" style="margin-top: 1rem;">
             <strong style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); font-family: 'JetBrains Mono', monospace;">Event types</strong>
             <div class="endpoint-list" style="margin-top: 0.5rem;">
@@ -96,10 +93,13 @@
               <strong>Expected Headers</strong>
               <span><code>X-Event-Id</code>, <code>X-Event-Type</code>, <code>X-Request-Id</code></span>
             </div>
-            <div class="summary-box">
-              <strong>Hardening</strong>
-              <span>HTTPS, network restrictions, idempotency checks</span>
-            </div>
+          </div>
+
+            <div class="subtle-card" style="margin-top: 1rem;">
+                <strong style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); font-family: 'JetBrains Mono', monospace;">Local delivery note</strong>
+                <p class="muted" style="margin-top: 0.5rem;">
+                Rankacy cannot deliver webhook requests to <code>localhost</code> directly. If you want to receive real events while running this app locally, expose it through a public HTTPS tunnel such as <code>ngrok http 9000</code> and register that tunnel URL instead.
+            </p>
           </div>
         </article>
       </section>
